@@ -101,7 +101,7 @@ class SaleReturnLogLine(models.Model):
     log_id = fields.Many2one("sale.return.log", required=True, ondelete="cascade", index=True)
     sale_line_id = fields.Many2one("sale.order.line", required=True, ondelete="restrict", index=True)
     product_id = fields.Many2one(related="sale_line_id.product_id", store=True)
-    product_uom_id = fields.Many2one(related="sale_line_id.product_uom")
+    product_uom_id = fields.Many2one(related="sale_line_id.product_uom_id")
     action = fields.Selection(RETURN_ACTIONS, required=True)
     quantity = fields.Float(digits="Product Unit of Measure", help="Quantity requested in the wizard.")
     credit_qty = fields.Float("Qty Credited", digits="Product Unit of Measure", help="Quantity credited on credit notes.")
@@ -118,10 +118,10 @@ class SaleReturnLogLine(models.Model):
         help="Returned quantity already received back in stock.",
     )
 
-    @api.depends("return_move_ids.state", "return_move_ids.quantity_done")
+    @api.depends("return_move_ids.state", "return_move_ids.quantity")
     def _compute_qty_received(self):
         for line in self:
             line.qty_received = sum(
-                m.product_uom._compute_quantity(m.quantity_done, line.product_uom_id)
+                m.product_uom._compute_quantity(m.quantity, line.product_uom_id)
                 for m in line.return_move_ids.filtered(lambda m: m.state == "done")
             )

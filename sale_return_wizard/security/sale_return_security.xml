@@ -2,7 +2,6 @@
 <odoo>
     <record id="group_sale_return_user" model="res.groups">
         <field name="name">Returns &amp; Credit Notes</field>
-        <field name="category_id" ref="base.module_category_hidden"/>
         <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
         <field name="comment">Can open the Return / Credit wizard on confirmed sale orders. Creating
             return pickings additionally requires Inventory / User, posting credit notes requires

@@ -16,6 +16,16 @@ class StockMove(models.Model):
              "reduced accordingly (refund return, no replacement).",
     )
 
+    def _sret_processed_qty(self):
+        """Quantity of this move that somebody already processed (move UoM).
+
+        v17: ``quantity_done`` is gone. ``quantity`` now holds the reserved
+        quantity *and* the done quantity, and only the ``picked`` flag tells
+        them apart. An open move that is not picked has nothing processed yet.
+        """
+        self.ensure_one()
+        return self.quantity if self.picked else 0.0
+
     def _action_done(self, cancel_backorder=False):
         moves_done = super()._action_done(cancel_backorder=cancel_backorder)
         moves_done._sale_return_reduce_ordered_qty()
@@ -42,8 +52,8 @@ class StockMove(models.Model):
         for move in moves.sudo():
             sol = move.sale_line_id
             log_line = move.sale_return_log_line_id
-            rounding = sol.product_uom.rounding
-            qty = move.product_uom._compute_quantity(move.quantity_done, sol.product_uom)
+            rounding = sol.product_uom_id.rounding
+            qty = move.product_uom._compute_quantity(move.quantity, sol.product_uom_id)
             if float_is_zero(qty, precision_rounding=rounding):
                 continue
             new_qty = sol.product_uom_qty - qty

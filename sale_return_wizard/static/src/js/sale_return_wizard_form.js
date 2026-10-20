@@ -59,7 +59,9 @@ export class SaleReturnWizardFormController extends FormController {
         }
         this._filtering = true;
         try {
-            await this.model.root.save({ stayInEdition: true });
+            // v17: forms have no read/edit mode any more, so `stayInEdition` is gone;
+            // save() reloads the record by default, which refreshes the lines.
+            await this.model.root.save();
         } finally {
             this._filtering = false;
             this._filterKey = this._currentFilterKey();

@@ -21,10 +21,11 @@ class StockPicking(models.Model):
             picking.sale_return_wizard_allowed = not picking.sudo()._sret_picking_block_reason()
 
     def _compute_sale_return_log_count(self):
+        # v17 _read_group: (domain, groupby, aggregates) -> [(record, count), ...]
         data = self.env["sale.return.log"]._read_group(
-            [("origin_picking_id", "in", self.ids)], ["origin_picking_id"], ["origin_picking_id"]
+            [("origin_picking_id", "in", self.ids)], ["origin_picking_id"], ["__count"]
         )
-        counts = {d["origin_picking_id"][0]: d["origin_picking_id_count"] for d in data}
+        counts = {picking.id: count for picking, count in data}
         for picking in self:
             picking.sale_return_log_count = counts.get(picking.id, 0)
 
@@ -47,7 +48,7 @@ class StockPicking(models.Model):
             return _("This transfer is already a return.")
         if self.state == "cancel":
             return _("This transfer is cancelled.")
-        if self.sale_id.state != "sale":
+        if not self.sale_id._sret_is_open_for_return():
             return _("The sale order %s is not confirmed (or is locked).", self.sale_id.name)
         return False
 

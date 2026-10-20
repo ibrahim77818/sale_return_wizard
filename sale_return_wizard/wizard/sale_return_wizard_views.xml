@@ -23,7 +23,7 @@
                 </div>
 
                 <field name="picking_id" invisible="1"/>
-                <div class="alert alert-info mb-3" role="status" attrs="{'invisible': [('info_message', '=', False)]}">
+                <div class="alert alert-info mb-3" role="status" invisible="not info_message">
                     <field name="info_message" nolabel="1"/>
                 </div>
 
@@ -77,8 +77,8 @@
                 </div>
 
                 <!-- Lines -->
-                <field name="line_ids" nolabel="1" mode="tree">
-                    <tree editable="bottom" create="0" delete="0" limit="80"
+                <field name="line_ids" nolabel="1" mode="list">
+                    <list editable="bottom" create="0" delete="0" limit="80"
                           decoration-muted="action == 'keep'"
                           decoration-danger="quantity &gt; max_qty or quantity &lt; 0"
                           decoration-info="action != 'keep' and quantity &lt;= max_qty">
@@ -96,11 +96,11 @@
                         <field name="pending_qty" readonly="1" optional="show"/>
                         <field name="product_uom_id" string="UoM" readonly="1" optional="hide"/>
                         <field name="action"/>
-                        <field name="quantity" attrs="{'readonly': [('action', '=', 'keep')]}"/>
+                        <field name="quantity" readonly="action == 'keep'"/>
                         <field name="max_qty" readonly="1"/>
                         <field name="credit_qty" readonly="1" optional="hide"/>
                         <field name="credit_amount" readonly="1" sum="Credit" optional="show"/>
-                    </tree>
+                    </list>
                 </field>
 
                 <!-- Options -->
