@@ -18,8 +18,8 @@ class TestSaleReturnWizard(TestSaleCommon):
     """
 
     @classmethod
-    def setUpClass(cls, chart_template_ref=None):
-        super().setUpClass(chart_template_ref=chart_template_ref)
+    def setUpClass(cls):
+        super().setUpClass()
         cls.warehouse = cls.env["stock.warehouse"].search([("company_id", "=", cls.env.company.id)], limit=1)
         cls.stock_location = cls.warehouse.lot_stock_id
 
@@ -28,7 +28,8 @@ class TestSaleReturnWizard(TestSaleCommon):
                 "name": "Product %s" % code,
                 "default_code": "SKU-%s" % code,
                 "barcode": "BAR-%s" % code,
-                "detailed_type": "product",
+                "type": "consu",
+                "is_storable": True,
                 "invoice_policy": policy,
                 "list_price": price,
                 "taxes_id": [Command.clear()],
@@ -69,7 +70,9 @@ class TestSaleReturnWizard(TestSaleCommon):
         self.assertEqual(len(picking), 1)
         picking.action_assign()
         for move in picking.move_ids:
-            move.quantity_done = quantities.get(move.product_id, 0.0)
+            qty = quantities.get(move.product_id, 0.0)
+            move.quantity = qty
+            move.picked = bool(qty)
         picking.with_context(skip_backorder=True, skip_immediate=True).button_validate()
         return picking
 
@@ -179,8 +182,8 @@ class TestSaleReturnWizard(TestSaleCommon):
         self.assertEqual(picking.state, "done")
         self.assertEqual(picking.picking_type_code, "incoming")
         moves = {m.product_id: m for m in picking.move_ids}
-        self.assertEqual(moves[self.prod_a].quantity_done, 3.0)
-        self.assertEqual(moves[self.prod_b].quantity_done, 10.0)
+        self.assertEqual(moves[self.prod_a].quantity, 3.0)
+        self.assertEqual(moves[self.prod_b].quantity, 10.0)
         self.assertTrue(all(m.to_refund for m in picking.move_ids))
 
         # one posted credit note with exact quantities / proportional amounts
@@ -298,7 +301,8 @@ class TestSaleReturnWizard(TestSaleCommon):
         self.assertEqual(sol_a.product_uom_qty, 10.0, "Unchanged until goods are received")
 
         # warehouse receives later
-        picking.move_ids.quantity_done = 3.0
+        picking.move_ids.quantity = 3.0
+        picking.move_ids.picked = True
         picking.with_context(skip_backorder=True, skip_immediate=True).button_validate()
         self.assertEqual((sol_a.product_uom_qty, sol_a.qty_delivered), (7.0, 7.0))
         self.assertEqual(log.state, "done")
@@ -486,7 +490,8 @@ class TestSaleReturnWizard(TestSaleCommon):
         self._deliver(so, {self.prod_a: 10, self.prod_b: 10, self.prod_c: 6, self.prod_d: 10})
         backorder = so.picking_ids.filtered(lambda p: p.state not in ("done", "cancel"))
         backorder.action_assign()
-        backorder.move_ids.quantity_done = 1.0  # warehouse already picked 1
+        backorder.move_ids.quantity = 1.0  # warehouse already picked 1
+        backorder.move_ids.picked = True
 
         wizard = self._picking_wizard(backorder)
         line_c = self._line(wizard, self.prod_c)
@@ -497,7 +502,7 @@ class TestSaleReturnWizard(TestSaleCommon):
         self._process(wizard)
 
         move_c = backorder.move_ids.filtered(lambda m: m.state != "cancel")
-        self.assertEqual((move_c.product_uom_qty, move_c.quantity_done), (1.0, 1.0))
+        self.assertEqual((move_c.product_uom_qty, move_c.quantity), (1.0, 1.0))
         self.assertEqual(self._sol(so, self.prod_c).product_uom_qty, 7.0)
 
     def test_53_picking_refusals(self):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Sale Return & Credit Wizard",
-    "version": "16.0.1.3.0",
+    "version": "18.0.1.3.0",
     "category": "Sales/Sales",
     "summary": "Line-by-line returns, cancellations and customer credit notes "
                "for high-volume Sale Orders, with full traceability",
