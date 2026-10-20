@@ -118,10 +118,10 @@ class SaleReturnLogLine(models.Model):
         help="Returned quantity already received back in stock.",
     )
 
-    @api.depends("return_move_ids.state", "return_move_ids.quantity_done")
+    @api.depends("return_move_ids.state", "return_move_ids.quantity")
     def _compute_qty_received(self):
         for line in self:
             line.qty_received = sum(
-                m.product_uom._compute_quantity(m.quantity_done, line.product_uom_id)
+                m.product_uom._compute_quantity(m.quantity, line.product_uom_id)
                 for m in line.return_move_ids.filtered(lambda m: m.state == "done")
             )

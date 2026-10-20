@@ -262,7 +262,7 @@ class SaleReturnWizard(models.TransientModel):
     def action_confirm(self):
         self.ensure_one()
         order = self.sale_order_id
-        if order.state != "sale":
+        if not order._sret_is_open_for_return():
             raise UserError(_("The sale order %s is not confirmed (or is locked).", order.name))
 
         lines = self.all_line_ids.filtered(
@@ -384,7 +384,7 @@ class SaleReturnWizard(models.TransientModel):
     def _process_cancellations(self, lines, log_line_by_sol):
         """Reduce the ordered quantity of undelivered goods.
 
-        In v16, decreasing product_uom_qty on a confirmed line launches a
+        In v16 and v17, decreasing product_uom_qty on a confirmed line launches a
         negative procurement which is merged into the pending delivery moves
         (and cancels them when they reach zero) - we rely on that standard
         mechanism instead of editing pickings by hand.
@@ -431,19 +431,29 @@ class SaleReturnWizard(models.TransientModel):
         origins = move.move_orig_ids.filtered(
             lambda m: m.state not in ("done", "cancel") and m.move_dest_ids == move
         )
+        # v17: read the processed quantity BEFORE unreserving (see below).
+        processed = move._sret_processed_qty()
         move._do_unreserve()
         new_qty = move.product_uom_qty - qty
-        if float_compare(new_qty, move.quantity_done, precision_rounding=rounding) < 0:
+        if float_compare(new_qty, processed, precision_rounding=rounding) < 0:
             raise UserError(_("%s: cannot cancel quantities already processed.", move.product_id.display_name))
         if float_is_zero(new_qty, precision_rounding=rounding):
             move._action_cancel()
         else:
             move.product_uom_qty = new_qty
             move._action_assign()
+            # v17 merged reserved and done quantities into ``quantity``; if the
+            # unreserve above reset lines the warehouse had already picked,
+            # restore them so processed quantities are never lost.
+            if not float_is_zero(processed, precision_rounding=rounding) and float_compare(
+                move.quantity, processed, precision_rounding=rounding
+            ) < 0:
+                move.quantity = processed
+                move.picked = True
         for origin in origins:
             origin_qty = min(
                 move.product_uom._compute_quantity(qty, origin.product_uom),
-                max(origin.product_uom_qty - origin.quantity_done, 0.0),
+                max(origin.product_uom_qty - origin._sret_processed_qty(), 0.0),
             )
             if float_compare(origin_qty, 0.0, precision_rounding=origin.product_uom.rounding) > 0:
                 self._decrease_move(origin, origin_qty)
@@ -520,7 +530,8 @@ class SaleReturnWizard(models.TransientModel):
                 picking.message_post(body=_("Contains lot/serial-tracked products: to be validated by the warehouse."))
                 continue
             for move in picking.move_ids.filtered(lambda m: m.state not in ("done", "cancel")):
-                move.quantity_done = move.product_uom_qty
+                move.quantity = move.product_uom_qty
+                move.picked = True
             res = picking.with_context(skip_backorder=True, skip_immediate=True, skip_sms=True).button_validate()
             if res is not True:
                 picking.message_post(body=_("Automatic validation needs extra input: please validate manually."))

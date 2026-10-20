@@ -10,12 +10,23 @@ class SaleOrder(models.Model):
     sale_return_log_count = fields.Integer(compute="_compute_sale_return_log_count")
 
     def _compute_sale_return_log_count(self):
+        # v17 _read_group: (domain, groupby, aggregates) -> [(record, count), ...]
         data = self.env["sale.return.log"]._read_group(
-            [("sale_order_id", "in", self.ids)], ["sale_order_id"], ["sale_order_id"]
+            [("sale_order_id", "in", self.ids)], ["sale_order_id"], ["__count"]
         )
-        counts = {d["sale_order_id"][0]: d["sale_order_id_count"] for d in data}
+        counts = {order.id: count for order, count in data}
         for order in self:
             order.sale_return_log_count = counts.get(order.id, 0)
+
+    def _sret_is_open_for_return(self):
+        """Confirmed and not locked.
+
+        In v16 a locked order had the ``done`` state, so ``state == "sale"``
+        was enough. v17 moves locking to a ``locked`` flag on a ``sale`` order;
+        the field lookup keeps this safe if the flag does not exist.
+        """
+        self.ensure_one()
+        return self.state == "sale" and not ("locked" in self._fields and self.locked)
 
     def action_open_sale_return_wizard(self):
         """Create the wizard server-side (with all its lines) and open it.
@@ -25,7 +36,7 @@ class SaleOrder(models.Model):
         user's edits, change line visibility and re-open the same wizard.
         """
         self.ensure_one()
-        if self.state != "sale":
+        if not self._sret_is_open_for_return():
             raise UserError(_("Returns and credit notes can only be processed on confirmed sale orders."))
         wizard = self.env["sale.return.wizard"].create({"sale_order_id": self.id})
         return wizard._action_reopen()
@@ -84,16 +95,16 @@ class SaleOrderLine(models.Model):
     @staticmethod
     def _sret_move_cancellable_qty(move):
         """Open demand of a move that nobody has started to process (move UoM)."""
-        return max(move.product_uom_qty - move.quantity_done, 0.0)
+        return max(move.product_uom_qty - move._sret_processed_qty(), 0.0)
 
     @staticmethod
     def _sret_move_remaining_qty(move):
         """Quantity of a done delivery move not yet covered by a return (move UoM)."""
         returned = 0.0
         for ret in move.returned_move_ids.filtered(lambda r: r.state != "cancel"):
-            qty = ret.quantity_done if ret.state == "done" else ret.product_uom_qty
+            qty = ret.quantity if ret.state == "done" else ret.product_uom_qty
             returned += ret.product_uom._compute_quantity(qty, move.product_uom)
-        return max(move.quantity_done - returned, 0.0)
+        return max(move.quantity - returned, 0.0)
 
     def _sret_posted_invoiced_qty(self):
         self.ensure_one()
@@ -145,7 +156,7 @@ class SaleOrderLine(models.Model):
         pending = max(ordered - delivered, 0.0)
         if picking:
             done_in_picking = sum(
-                m.product_uom._compute_quantity(m.quantity_done, self.product_uom)
+                m.product_uom._compute_quantity(m.quantity, self.product_uom)
                 for m in self._sret_returnable_moves(picking)
             )
             open_in_picking = sum(

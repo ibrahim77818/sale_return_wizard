@@ -1,4 +1,4 @@
-# Sale Return & Credit Wizard (Odoo 16)
+# Sale Return & Credit Wizard (Odoo 17)
 
 `sale_return_wizard` adds a **Return / Credit** button to confirmed Sale Orders. It opens a popup listing every order line, where each line can be kept, returned, credited or cancelled. On validation the module creates the right pickings and credit notes, and it records the whole operation in a return log.
 
@@ -80,3 +80,11 @@ The button is hidden or refused for:
 - deliveries with nothing left to process
 
 Lines that belong to another SO, and kit products, are left out and named in an info banner. The return log records the delivery it came from, and the delivery has a **Return Logs** smart button.
+
+## Porting notes, 16.0 to 17.0 (17.0.1.3.0)
+- `stock.move.quantity_done` no longer exists. `quantity` now holds reserved and done quantities; `stock.move._sret_processed_qty()` returns the processed part (`quantity` only when `picked`).
+- `attrs` was replaced by inline `invisible` / `readonly` expressions in all views.
+- `_read_group` calls use the v17 signature (`groupby`, `aggregates=["__count"]`) and return `(record, count)` tuples.
+- Locked orders: v17 locks through a `locked` flag instead of the `done` state, checked by `sale.order._sret_is_open_for_return()`.
+- The form JS no longer passes `stayInEdition` (forms have no edit mode in v17).
+- Tests set `quantity` and `picked` instead of `quantity_done`.

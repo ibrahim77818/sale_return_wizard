@@ -23,7 +23,7 @@
                 </div>
 
                 <field name="picking_id" invisible="1"/>
-                <div class="alert alert-info mb-3" role="status" attrs="{'invisible': [('info_message', '=', False)]}">
+                <div class="alert alert-info mb-3" role="status" invisible="not info_message">
                     <field name="info_message" nolabel="1"/>
                 </div>
 
@@ -96,7 +96,7 @@
                         <field name="pending_qty" readonly="1" optional="show"/>
                         <field name="product_uom_id" string="UoM" readonly="1" optional="hide"/>
                         <field name="action"/>
-                        <field name="quantity" attrs="{'readonly': [('action', '=', 'keep')]}"/>
+                        <field name="quantity" readonly="action == 'keep'"/>
                         <field name="max_qty" readonly="1"/>
                         <field name="credit_qty" readonly="1" optional="hide"/>
                         <field name="credit_amount" readonly="1" sum="Credit" optional="show"/>
