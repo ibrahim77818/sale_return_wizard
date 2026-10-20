@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_return_wizard_form" model="ir.ui.view">
+        <field name="name">sale.return.wizard.form</field>
+        <field name="model">sale.return.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Return / Credit" js_class="sale_return_wizard_form">
+                <field name="company_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+
+                <!-- Title + live counters -->
+                <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2 mb-3">
+                    <h4 class="mb-0">
+                        <field name="sale_order_id" readonly="1" options="{'no_open': True}" class="oe_inline"/>
+                        <span class="text-muted"> - </span>
+                        <field name="partner_id" readonly="1" options="{'no_open': True}" class="oe_inline"/>
+                    </h4>
+                    <div class="text-muted">
+                        <field name="visible_line_count" class="oe_inline"/> / <field name="total_line_count" class="oe_inline"/> lines shown
+                        · <field name="selected_line_count" class="oe_inline"/> selected
+                        · est. credit <field name="estimated_credit_amount" class="oe_inline fw-bold text-body"/>
+                    </div>
+                </div>
+
+                <field name="picking_id" invisible="1"/>
+                <div class="alert alert-info mb-3" role="status" attrs="{'invisible': [('info_message', '=', False)]}">
+                    <field name="info_message" nolabel="1"/>
+                </div>
+
+                <!-- Search & filter panel -->
+                <div class="border rounded p-3 mb-3 bg-100">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-lg-5">
+                            <label for="filter_text" string="Search"/>
+                            <field name="filter_text" class="w-100"
+                                   placeholder="Name, SKU or barcode (comma = OR)"/>
+                        </div>
+                        <div class="col-lg-4">
+                            <label for="filter_qty_field" string="Quantity between"/>
+                            <div class="d-flex align-items-center gap-2">
+                                <field name="filter_qty_field" class="w-50" placeholder="Any"/>
+                                <field name="filter_qty_min" class="text-end" placeholder="min"/>
+                                <span class="text-muted">to</span>
+                                <field name="filter_qty_max" class="text-end" placeholder="max"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="d-flex align-items-center">
+                                <field name="filter_only_actionable" widget="boolean_toggle" class="oe_inline me-1"/>
+                                <label for="filter_only_actionable" class="mb-0"/>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <field name="filter_only_selected" widget="boolean_toggle" class="oe_inline me-1"/>
+                                <label for="filter_only_selected" class="mb-0"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+                        <div class="d-flex flex-wrap align-items-center gap-1">
+                            <span class="text-muted me-1">On shown lines:</span>
+                            <button name="action_bulk_return" type="object" string="Return all returnable"
+                                    icon="fa-undo" class="btn-light btn-sm"/>
+                            <button name="action_bulk_credit" type="object" string="Credit all invoiced"
+                                    icon="fa-file-text-o" class="btn-light btn-sm"/>
+                            <button name="action_bulk_cancel" type="object" string="Cancel all undelivered"
+                                    icon="fa-ban" class="btn-light btn-sm"/>
+                            <button name="action_bulk_keep" type="object" string="Keep all"
+                                    icon="fa-check" class="btn-light btn-sm"/>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <button name="action_apply_filter" type="object" string="Refresh"
+                                    icon="fa-filter" class="btn-primary btn-sm"/>
+                            <button name="action_reset_filter" type="object" string="Reset"
+                                    icon="fa-times" class="btn-secondary btn-sm"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lines -->
+                <field name="line_ids" nolabel="1" mode="tree">
+                    <tree editable="bottom" create="0" delete="0" limit="80"
+                          decoration-muted="action == 'keep'"
+                          decoration-danger="quantity &gt; max_qty or quantity &lt; 0"
+                          decoration-info="action != 'keep' and quantity &lt;= max_qty">
+                        <field name="sale_line_id" invisible="1"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="posted_creditable_qty" invisible="1"/>
+                        <field name="product_id" readonly="1" options="{'no_open': True}"/>
+                        <field name="default_code" readonly="1" optional="hide"/>
+                        <field name="name" readonly="1" optional="hide"/>
+                        <field name="ordered_qty" readonly="1" sum="Ordered"/>
+                        <field name="delivered_qty" readonly="1" sum="Delivered"/>
+                        <field name="invoiced_qty" readonly="1" sum="Invoiced"/>
+                        <field name="returnable_qty" readonly="1" optional="show"/>
+                        <field name="creditable_qty" readonly="1" optional="hide"/>
+                        <field name="pending_qty" readonly="1" optional="show"/>
+                        <field name="product_uom_id" string="UoM" readonly="1" optional="hide"/>
+                        <field name="action"/>
+                        <field name="quantity" attrs="{'readonly': [('action', '=', 'keep')]}"/>
+                        <field name="max_qty" readonly="1"/>
+                        <field name="credit_qty" readonly="1" optional="hide"/>
+                        <field name="credit_amount" readonly="1" sum="Credit" optional="show"/>
+                    </tree>
+                </field>
+
+                <!-- Options -->
+                <div class="row g-3 mt-1">
+                    <div class="col-lg-6">
+                        <label for="reason"/>
+                        <field name="reason" class="w-100" placeholder="e.g. Damaged on arrival"/>
+                    </div>
+                    <div class="col-lg-3 d-flex align-items-center">
+                        <field name="auto_validate_return" class="oe_inline me-1"/>
+                        <label for="auto_validate_return" class="mb-0"/>
+                    </div>
+                    <div class="col-lg-3 d-flex align-items-center">
+                        <field name="auto_post_credit_note" class="oe_inline me-1"/>
+                        <label for="auto_post_credit_note" class="mb-0"/>
+                    </div>
+                    <div class="col-lg-6" groups="stock.group_stock_multi_locations">
+                        <label for="return_location_id"/>
+                        <field name="return_location_id" class="w-100" options="{'no_create': True}"
+                               placeholder="Where the goods were shipped from"/>
+                    </div>
+                </div>
+
+                <footer>
+                    <button name="action_confirm" type="object" string="Process"
+                            class="btn-primary" data-hotkey="q"
+                            confirm="Create the return pickings and credit notes for the selected lines?"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

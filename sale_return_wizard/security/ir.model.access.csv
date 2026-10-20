@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_return_wizard_user,sale.return.wizard user,model_sale_return_wizard,group_sale_return_user,1,1,1,1
+access_sale_return_wizard_line_user,sale.return.wizard.line user,model_sale_return_wizard_line,group_sale_return_user,1,1,1,1
+access_sale_return_log_salesman,sale.return.log salesman,model_sale_return_log,sales_team.group_sale_salesman,1,0,0,0
+access_sale_return_log_user,sale.return.log user,model_sale_return_log,group_sale_return_user,1,1,1,0
+access_sale_return_log_manager,sale.return.log manager,model_sale_return_log,sales_team.group_sale_manager,1,1,1,1
+access_sale_return_log_line_salesman,sale.return.log.line salesman,model_sale_return_log_line,sales_team.group_sale_salesman,1,0,0,0
+access_sale_return_log_line_user,sale.return.log.line user,model_sale_return_log_line,group_sale_return_user,1,1,1,0
+access_sale_return_log_line_manager,sale.return.log.line manager,model_sale_return_log_line,sales_team.group_sale_manager,1,1,1,1
+access_sale_return_log_stock_user,sale.return.log stock user,model_sale_return_log,stock.group_stock_user,1,1,0,0
+access_sale_return_log_line_stock_user,sale.return.log.line stock user,model_sale_return_log_line,stock.group_stock_user,1,1,0,0

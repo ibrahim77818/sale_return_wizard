@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_return_log_tree" model="ir.ui.view">
+        <field name="name">sale.return.log.tree</field>
+        <field name="model">sale.return.log</field>
+        <field name="arch" type="xml">
+            <tree create="0" decoration-warning="state == 'waiting'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="sale_order_id"/>
+                <field name="origin_picking_id" optional="show"/>
+                <field name="partner_id"/>
+                <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="reason" optional="show"/>
+                <field name="picking_count" string="Returns"/>
+                <field name="credit_note_count" string="Credit Notes"/>
+                <field name="amount_credited" sum="Total"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'"
+                       decoration-warning="state == 'waiting'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_sale_return_log_form" model="ir.ui.view">
+        <field name="name">sale.return.log.form</field>
+        <field name="model">sale.return.log</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_pickings" type="object" class="oe_stat_button"
+                                icon="fa-truck" attrs="{'invisible': [('picking_count', '=', 0)]}">
+                            <field name="picking_count" widget="statinfo" string="Returns"/>
+                        </button>
+                        <button name="action_view_credit_notes" type="object" class="oe_stat_button"
+                                icon="fa-pencil-square-o" attrs="{'invisible': [('credit_note_count', '=', 0)]}">
+                            <field name="credit_note_count" widget="statinfo" string="Credit Notes"/>
+                        </button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="sale_order_id"/>
+                            <field name="origin_picking_id" attrs="{'invisible': [('origin_picking_id', '=', False)]}"/>
+                            <field name="partner_id"/>
+                            <field name="reason"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="user_id"/>
+                            <field name="amount_credited"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lines" name="lines">
+                            <field name="line_ids">
+                                <tree>
+                                    <field name="product_id"/>
+                                    <field name="action"/>
+                                    <field name="quantity"/>
+                                    <field name="credit_qty"/>
+                                    <field name="qty_received"/>
+                                    <field name="so_qty_reduced"/>
+                                    <field name="product_uom_id" string="UoM"/>
+                                    <field name="credit_move_ids" widget="many2many_tags"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <group>
+                                <field name="picking_ids" widget="many2many_tags"/>
+                                <field name="credit_note_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sale_return_log_search" model="ir.ui.view">
+        <field name="name">sale.return.log.search</field>
+        <field name="model">sale.return.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="sale_order_id"/>
+                <field name="partner_id"/>
+                <field name="line_ids" string="Product" filter_domain="[('line_ids.product_id', 'ilike', self)]"/>
+                <filter name="waiting" string="Waiting Goods" domain="[('state', '=', 'waiting')]"/>
+                <filter name="mine" string="My Returns" domain="[('user_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_sale_return_log" model="ir.actions.act_window">
+        <field name="name">Returns &amp; Credits</field>
+        <field name="res_model">sale.return.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'create': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No returns yet</p>
+            <p>Use the <b>Return / Credit</b> button on a confirmed sale order.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_sale_return_log"
+              name="Returns &amp; Credits"
+              parent="sale.sale_order_menu"
+              action="action_sale_return_log"
+              sequence="25"
+              groups="sales_team.group_sale_salesman"/>
+</odoo>

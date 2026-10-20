@@ -1,0 +1,258 @@
+<!--
+  Odoo Apps description page for sale_return_wizard (Odoo 16).
+  Inline styles only: apps.odoo.com strips <style> and <script> blocks.
+-->
+<section style="max-width:1120px;margin:0 auto;padding:0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#2b2b33;">
+
+  <!-- ============================== HERO ============================== -->
+  <div style="background:linear-gradient(120deg,#017E84 0%,#3d6b78 45%,#714B67 100%);border-radius:18px;padding:48px 40px 40px;color:#ffffff;margin-top:12px;">
+    <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:.85;margin-bottom:10px;">Sales &middot; Inventory &middot; Accounting</div>
+    <h1 style="font-size:40px;line-height:1.15;font-weight:700;margin:0 0 14px;color:#ffffff;">Sale Return &amp; Credit Wizard</h1>
+    <p style="font-size:19px;line-height:1.55;max-width:760px;margin:0 0 24px;color:#ffffff;opacity:.95;">
+      Handle customer returns, cancellations and credit notes for any line of a Sale Order from a single popup.
+      The wizard creates the return receipt, the credit note and the order changes in one step, and only credits what was actually invoiced.
+    </p>
+    <div>
+      <span style="display:inline-block;border:1px solid rgba(255,255,255,.7);border-radius:20px;padding:6px 14px;margin:0 8px 8px 0;font-size:14px;">Odoo 16.0</span>
+      <span style="display:inline-block;border:1px solid rgba(255,255,255,.7);border-radius:20px;padding:6px 14px;margin:0 8px 8px 0;font-size:14px;">Community &amp; Enterprise</span>
+      <span style="display:inline-block;border:1px solid rgba(255,255,255,.7);border-radius:20px;padding:6px 14px;margin:0 8px 8px 0;font-size:14px;">20 automated tests</span>
+      <span style="display:inline-block;border:1px solid rgba(255,255,255,.7);border-radius:20px;padding:6px 14px;margin:0 8px 8px 0;font-size:14px;">LGPL-3</span>
+    </div>
+  </div>
+
+  <!-- ============================== KEY NUMBERS ============================== -->
+  <div style="display:flex;flex-wrap:wrap;margin:28px -8px 8px;">
+    <div style="flex:1 1 220px;margin:8px;background:#f6f4f6;border-radius:14px;padding:20px 22px;">
+      <div style="font-size:30px;font-weight:700;color:#714B67;">1 popup</div>
+      <div style="font-size:15px;color:#555;">replaces delivery-by-delivery returns, the separate credit note and manual order edits</div>
+    </div>
+    <div style="flex:1 1 220px;margin:8px;background:#eef6f6;border-radius:14px;padding:20px 22px;">
+      <div style="font-size:30px;font-weight:700;color:#017E84;">4 line actions</div>
+      <div style="font-size:15px;color:#555;">Keep, Return &amp; Refund, Credit Only or Cancel Undelivered, chosen per line</div>
+    </div>
+    <div style="flex:1 1 220px;margin:8px;background:#f6f4f6;border-radius:14px;padding:20px 22px;">
+      <div style="font-size:30px;font-weight:700;color:#714B67;">3 checks</div>
+      <div style="font-size:15px;color:#555;">on every quantity: while typing, when saving, and against the live order on Process</div>
+    </div>
+  </div>
+
+  <!-- ============================== PROBLEM / SOLUTION ============================== -->
+  <h2 style="font-size:28px;font-weight:700;margin:40px 0 6px;color:#2b2b33;">Why this module</h2>
+  <p style="font-size:16px;color:#555;margin:0 0 18px;">Handling a customer return in standard Odoo works, but it takes three apps and many manual steps, and it is easy to get wrong when an order has many lines, several deliveries or partial invoices.</p>
+  <div style="display:flex;flex-wrap:wrap;margin:0 -10px;">
+    <div style="flex:1 1 440px;margin:10px;border:1px solid #f1d6d6;background:#fff8f8;border-radius:14px;padding:24px 26px;">
+      <h3 style="font-size:19px;font-weight:700;color:#b33939;margin:0 0 12px;">In standard Odoo 16</h3>
+      <ul style="font-size:15px;line-height:1.65;margin:0;padding-left:20px;color:#3a3a42;">
+        <li>Returns start from <b>one delivery at a time</b>. With several deliveries per order you must find the right one first.</li>
+        <li>The return screen lists stock moves with <b>no search, no filter</b> and no view of what was invoiced.</li>
+        <li>The <b>credit note is a separate step</b>: create it from the order or the invoice, then check each line against what came back.</li>
+        <li>For products <b>invoiced on ordered quantities</b>, the order quantity, the pending delivery and the credit note must all be fixed by hand.</li>
+        <li>A credit note reversed from the invoice stays linked to the order, so a <b>goodwill credit makes the quantity invoiceable again</b>.</li>
+        <li>Nothing ties the return, the credit note, the order change and the reason together in <b>one audit record</b>.</li>
+      </ul>
+    </div>
+    <div style="flex:1 1 440px;margin:10px;border:1px solid #cfe7e7;background:#f4fbfb;border-radius:14px;padding:24px 26px;">
+      <h3 style="font-size:19px;font-weight:700;color:#017E84;margin:0 0 12px;">With this module</h3>
+      <ul style="font-size:15px;line-height:1.65;margin:0;padding-left:20px;color:#3a3a42;">
+        <li>One <b>Return / Credit</b> button on the Sale Order <b>and</b> on each customer delivery.</li>
+        <li>Every order line in one table with <b>ordered, delivered, invoiced, returnable and undelivered</b> quantities.</li>
+        <li><b>Search and filter</b> by product, SKU, barcode, description or quantity range. Built for orders with hundreds of lines.</li>
+        <li>One click creates the <b>return receipt</b>, the <b>credit note</b> (posted or draft) and reduces the <b>order and its pending delivery</b>.</li>
+        <li>Credit is limited to the <b>invoiced part</b> of each line, and <b>Credit Only</b> allowances never reopen the order for invoicing.</li>
+        <li>An <b>SRET log</b> links the order, the delivery, the return receipts, the credit notes and the reason.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================== HOW IT FLOWS ============================== -->
+  <h2 style="font-size:28px;font-weight:700;margin:44px 0 16px;color:#2b2b33;">How it works</h2>
+  <div style="display:flex;flex-wrap:wrap;margin:0 -8px;">
+    <div style="flex:1 1 200px;margin:8px;border-radius:12px;border:1px solid #e3dde2;padding:18px;">
+      <div style="width:34px;height:34px;border-radius:50%;background:#714B67;color:#fff;font-weight:700;text-align:center;line-height:34px;margin-bottom:10px;">1</div>
+      <div style="font-weight:700;margin-bottom:4px;">Open</div>
+      <div style="font-size:14px;color:#555;">Click <b>Return / Credit</b> on a confirmed Sale Order or a customer delivery.</div>
+    </div>
+    <div style="flex:1 1 200px;margin:8px;border-radius:12px;border:1px solid #e3dde2;padding:18px;">
+      <div style="width:34px;height:34px;border-radius:50%;background:#714B67;color:#fff;font-weight:700;text-align:center;line-height:34px;margin-bottom:10px;">2</div>
+      <div style="font-weight:700;margin-bottom:4px;">Filter</div>
+      <div style="font-size:14px;color:#555;">Find the lines concerned by name, SKU or quantity. The list filters as you type.</div>
+    </div>
+    <div style="flex:1 1 200px;margin:8px;border-radius:12px;border:1px solid #e3dde2;padding:18px;">
+      <div style="width:34px;height:34px;border-radius:50%;background:#714B67;color:#fff;font-weight:700;text-align:center;line-height:34px;margin-bottom:10px;">3</div>
+      <div style="font-weight:700;margin-bottom:4px;">Choose</div>
+      <div style="font-size:14px;color:#555;">Set an action and a quantity per line, or use a bulk button on the lines shown.</div>
+    </div>
+    <div style="flex:1 1 200px;margin:8px;border-radius:12px;border:1px solid #cfe7e7;background:#f4fbfb;padding:18px;">
+      <div style="width:34px;height:34px;border-radius:50%;background:#017E84;color:#fff;font-weight:700;text-align:center;line-height:34px;margin-bottom:10px;">4</div>
+      <div style="font-weight:700;margin-bottom:4px;">Process</div>
+      <div style="font-size:14px;color:#555;">Return receipt, credit note and order changes created, log written, popup closed.</div>
+    </div>
+  </div>
+
+  <!-- ============================== FEATURES ============================== -->
+  <h2 style="font-size:28px;font-weight:700;margin:48px 0 6px;color:#2b2b33;">Features</h2>
+  <p style="font-size:16px;color:#555;margin:0 0 8px;">All screenshots are from a live Odoo 16 database with demo data: order S00029, 10 lines, partly delivered and invoiced.</p>
+
+  <!-- F1 -->
+  <div style="margin:34px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 1</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">Return / Credit button on the Sale Order</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">Shown on confirmed orders to users in the <b>Returns &amp; Credit Notes</b> group (Sales Managers get it automatically). Quotations, cancelled and locked orders do not show it. A <b>Returns</b> smart button appears once the order has a return log.</p>
+    <img src="srw_01_so_button.png" alt="Sale order with the Return / Credit button" style="width:100%;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- F2 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 2</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">Every order line in one table</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">Each line shows <b>Ordered</b>, <b>Delivered</b>, <b>Invoiced</b>, <b>Returnable</b> and <b>Undelivered</b> quantities, combined across all deliveries and invoices of the order. The header shows how many lines are shown and selected, and the <b>estimated credit</b>, updated as you edit.</p>
+    <img src="srw_02_wizard.png" alt="Return / Credit wizard with all order lines" style="width:100%;max-width:1000px;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- F3 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 3</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">Search and filter large orders</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">Filter by <b>product name, SKU, barcode or line description</b> (comma-separated terms match any of them), by a <b>quantity range</b> on Ordered, Delivered, Invoiced, Returnable or Undelivered, or show only <b>actionable</b> or <b>selected</b> lines. The list filters as soon as a filter changes, and edits on hidden lines are kept.</p>
+    <img src="srw_03_filter_search.png" alt="Search by product name" style="width:100%;max-width:1000px;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+    <div style="font-size:13px;color:#777;margin:6px 0 22px;">Search &ldquo;chair&rdquo; matches product names and line descriptions: 3 of 10 lines shown.</div>
+    <img src="srw_04_filter_qty.png" alt="Filter on undelivered quantity" style="width:100%;max-width:1000px;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+    <div style="font-size:13px;color:#777;margin-top:6px;">Quantity = Undelivered (above 0): 2 of 10 lines shown.</div>
+  </div>
+
+  <!-- F4 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 4</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">Bulk actions on the lines shown</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;"><b>Return all returnable</b>, <b>Credit all invoiced</b>, <b>Cancel all undelivered</b> and <b>Keep all</b> apply the maximum allowed quantity to every line currently shown, and skip lines where the action has nothing available. Here the two backordered lines are set to <b>Cancel Undelivered</b> in one click.</p>
+    <img src="srw_05_bulk_cancel.png" alt="Bulk cancel of undelivered quantities" style="width:100%;max-width:1000px;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- F5 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 5</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">One action per line, with its own limit</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 10px;">Pick an action and the quantity fills in with the maximum allowed; lower it if needed. <b>Max</b> shows the limit for that action and <b>Credit</b> previews the untaxed amount, at the line's price and discount.</p>
+    <div style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">
+      <div style="margin-bottom:6px;"><span style="display:inline-block;min-width:150px;text-align:center;background:#e2e2e2;color:#444;border-radius:10px;padding:1px 8px;font-size:13px;margin-right:10px;">Keep</span>nothing changes on the line</div>
+      <div style="margin-bottom:6px;"><span style="display:inline-block;min-width:150px;text-align:center;background:#017E84;color:#fff;border-radius:10px;padding:1px 8px;font-size:13px;margin-right:10px;">Return &amp; Refund</span>goods come back, up to the delivered quantity not yet returned</div>
+      <div style="margin-bottom:6px;"><span style="display:inline-block;min-width:150px;text-align:center;background:#714B67;color:#fff;border-radius:10px;padding:1px 8px;font-size:13px;margin-right:10px;">Credit Only</span>price allowance, the customer keeps the goods, up to the invoiced quantity not yet credited</div>
+      <div><span style="display:inline-block;min-width:150px;text-align:center;background:#f0ad4e;color:#222;border-radius:10px;padding:1px 8px;font-size:13px;margin-right:10px;">Cancel Undelivered</span>drop what has not shipped yet, up to ordered minus delivered</div>
+    </div>
+    <img src="srw_06_line_actions.png" alt="Actions set on four lines" style="width:100%;max-width:1000px;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- F6 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 6</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">Quantities can never exceed what was ordered, delivered or invoiced</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">A quantity above the limit is <b>capped while you type</b>, with a message that explains why. Server-side constraints block negative values, quantities on Keep lines and anything above ordered, delivered, still-returnable or still-creditable. On Process, every line is <b>re-read from the live order</b>, so a return made meanwhile by a colleague is never duplicated.</p>
+    <img src="srw_07_qty_warning.png" alt="Invalid quantity warning" style="width:100%;max-width:1000px;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- F7 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 7</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">Review before anything is created</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">Switch on <b>Only Selected</b> to see exactly what will be processed and its total credit. Add a <b>reason</b>, choose whether to <b>receive the goods now</b> and whether to <b>post the credit note</b>, then click <b>Process</b>. <b>Cancel</b> closes the popup and nothing is created.</p>
+    <img src="srw_08_only_selected.png" alt="Only the selected lines, ready to process" style="width:100%;max-width:1000px;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- F8 + F9 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Features 8 &amp; 9</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">An exact credit note and a validated return receipt</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">One click here produced a <b>posted Customer Credit Note</b> for $315.00 (3 returned lamps, a 1-chair allowance and 5 over-invoiced drawers), with the reason as its reference and a link to the original invoice. The <b>return receipt</b> was created with Odoo's standard return mechanism against the <b>original delivery</b>, so valuation and traceability follow core rules, and it was validated straight away. The undelivered backorder was cancelled and the order quantities updated.</p>
+    <img src="srw_11_credit_note.png" alt="Posted customer credit note" style="width:100%;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);margin-bottom:22px;"/>
+    <img src="srw_12_return_receipt.png" alt="Validated return receipt" style="width:100%;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- F10 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 10</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">Audit trail: Returns &amp; Credits</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">Every run writes an <b>SRET/YYYY/NNNNN</b> record that cannot be created or edited by hand. It holds the user and date, the reason, the amount credited and, per line, the quantity asked, credited, received back and removed from the order, with smart buttons to the return receipts and credit notes. Status stays <b>Waiting Goods</b> until the warehouse validates the returns. Find it under <b>Sales &rsaquo; Orders &rsaquo; Returns &amp; Credits</b>, filtered by Waiting Goods or My Returns and grouped by customer or date.</p>
+    <img src="srw_10_return_log_form.png" alt="Return log form" style="width:100%;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);margin-bottom:22px;"/>
+    <img src="srw_13_return_log_list.png" alt="Returns &amp; Credits list" style="width:100%;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- F11 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 11</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">Summarised in the order's chatter</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">The Sale Order receives a message linking to the log, with one line per action, next to Odoo's own tracking of the changed quantities and totals.</p>
+    <img src="srw_09_so_after_chatter.png" alt="Chatter summary on the sale order" style="width:100%;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- F12 -->
+  <div style="margin:44px 0 0;">
+    <div style="font-size:13px;font-weight:700;color:#017E84;letter-spacing:1px;text-transform:uppercase;">Feature 12</div>
+    <h3 style="font-size:23px;font-weight:700;margin:4px 0 8px;">Start from a delivery too</h3>
+    <p style="font-size:15px;line-height:1.6;color:#555;margin:0 0 14px;">The same button sits next to Odoo's <b>Return</b> on every customer delivery of a confirmed order. From a delivery, the wizard lists only that delivery's products and caps every limit to what <b>this</b> transfer shipped or still has open. Cancelling from a backorder cuts that backorder's own moves, never another delivery. A <b>Return Logs</b> smart button and chatter messages appear on the delivery.</p>
+    <img src="srw_14_delivery_button.png" alt="Delivery with the Return / Credit button" style="width:100%;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);margin-bottom:22px;"/>
+    <img src="srw_15_delivery_wizard.png" alt="Wizard opened from a delivery" style="width:100%;max-width:1000px;border:1px solid #e1e1e6;border-radius:10px;box-shadow:0 6px 24px rgba(30,30,60,.10);"/>
+  </div>
+
+  <!-- ============================== ROUTING RULES ============================== -->
+  <h2 style="font-size:28px;font-weight:700;margin:52px 0 6px;color:#2b2b33;">Automatic routing</h2>
+  <p style="font-size:16px;color:#555;margin:0 0 16px;">Each line is routed by what was delivered and invoiced for it. You never choose the documents by hand.</p>
+  <table style="width:100%;border-collapse:collapse;font-size:15px;margin-bottom:18px;">
+    <thead>
+      <tr style="background:#714B67;color:#fff;">
+        <th style="text-align:left;padding:10px 14px;">Situation of the line</th>
+        <th style="text-align:left;padding:10px 14px;">Created on Process</th>
+        <th style="text-align:left;padding:10px 14px;">Order line afterwards</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 14px;"><b>Delivered &amp; invoiced</b>, return 3 of 10</td><td style="padding:10px 14px;">Validated return receipt + posted credit note for 3</td><td style="padding:10px 14px;">7 ordered, 7 delivered, 7 invoiced</td></tr>
+      <tr style="border-bottom:1px solid #eee;background:#fafafa;"><td style="padding:10px 14px;"><b>Invoice still in draft</b>, return 3</td><td style="padding:10px 14px;">Return receipt + draft credit note for 3</td><td style="padding:10px 14px;">Review and post with the invoice</td></tr>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 14px;"><b>Delivered, not invoiced</b>, return 4 of 10</td><td style="padding:10px 14px;">Return receipt only</td><td style="padding:10px 14px;">6 ordered, 6 delivered, 6 left to invoice</td></tr>
+      <tr style="border-bottom:1px solid #eee;background:#fafafa;"><td style="padding:10px 14px;"><b>Partially invoiced</b>: delivered 10, invoiced 6, return 8</td><td style="padding:10px 14px;">Return receipt for 8; credit only for the 6 invoiced</td><td style="padding:10px 14px;">2 ordered, 2 delivered, 2 left to invoice</td></tr>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 14px;"><b>Cancel Undelivered</b></td><td style="padding:10px 14px;">Pending delivery reduced or cancelled; credit note only for quantities invoiced in advance</td><td style="padding:10px 14px;">Ordered = delivered</td></tr>
+      <tr style="background:#fafafa;"><td style="padding:10px 14px;"><b>Credit Only</b></td><td style="padding:10px 14px;">Credit note line not linked to the order line</td><td style="padding:10px 14px;">Unchanged; nothing becomes invoiceable again</td></tr>
+    </tbody>
+  </table>
+  <div style="background:#f4fbfb;border-left:4px solid #017E84;border-radius:8px;padding:16px 20px;font-size:15px;line-height:1.6;">
+    <b>Return credit = min(Q, I)</b> &nbsp;&middot;&nbsp; <b>Cancel credit = min(Q, max(0, I &minus; (O &minus; Q)))</b> &nbsp;where Q = quantity, O = ordered, I = invoiced and not yet credited.<br/>
+    Example: ordered 20, invoiced 20 in advance, cancel 5 undelivered &rarr; 15 stay ordered against 20 invoiced, so <b>5 are credited</b>.
+    Quantities on posted invoices go to a posted credit note; quantities found only on draft invoices go to a draft one.
+  </div>
+
+  <!-- ============================== CORNER CASES ============================== -->
+  <h2 style="font-size:28px;font-weight:700;margin:48px 0 14px;color:#2b2b33;">Built for real-world corner cases</h2>
+  <div style="display:flex;flex-wrap:wrap;margin:0 -8px;font-size:15px;line-height:1.55;">
+    <div style="flex:1 1 320px;margin:8px;padding:16px 18px;border:1px solid #e8e8ee;border-radius:12px;"><b>Several deliveries per order</b><br/><span style="color:#555;">Returns are taken from the newest deliveries first, with one return receipt per original delivery.</span></div>
+    <div style="flex:1 1 320px;margin:8px;padding:16px 18px;border:1px solid #e8e8ee;border-radius:12px;"><b>Stale wizards</b><br/><span style="color:#555;">Quantities are re-read on Process, and a popup left open while the order changed is refused with a clear message.</span></div>
+    <div style="flex:1 1 320px;margin:8px;padding:16px 18px;border:1px solid #e8e8ee;border-radius:12px;"><b>Pending returns</b><br/><span style="color:#555;">Returns not yet validated are deducted from what can still be returned.</span></div>
+    <div style="flex:1 1 320px;margin:8px;padding:16px 18px;border:1px solid #e8e8ee;border-radius:12px;"><b>Receive later</b><br/><span style="color:#555;">Lot/serial-tracked goods, or Receive Now switched off, leave the receipt to the warehouse; the order is updated when it is validated, even by a user without sales rights.</span></div>
+    <div style="flex:1 1 320px;margin:8px;padding:16px 18px;border:1px solid #e8e8ee;border-radius:12px;"><b>Invoice on ordered quantities</b><br/><span style="color:#555;">Cancelling undelivered goods credits the part that becomes over-invoiced.</span></div>
+    <div style="flex:1 1 320px;margin:8px;padding:16px 18px;border:1px solid #e8e8ee;border-radius:12px;"><b>Repeated allowances</b><br/><span style="color:#555;">Credit Only quantities are remembered, so the same units can never be credited twice.</span></div>
+    <div style="flex:1 1 320px;margin:8px;padding:16px 18px;border:1px solid #e8e8ee;border-radius:12px;"><b>Multi-step deliveries</b><br/><span style="color:#555;">From a backorder, upstream pick and pack moves are reduced too; quantities already processed are never cancelled.</span></div>
+    <div style="flex:1 1 320px;margin:8px;padding:16px 18px;border:1px solid #e8e8ee;border-radius:12px;"><b>Unusual transfers</b><br/><span style="color:#555;">Receipts, internal transfers, dropships, returns and lines from another order are refused or listed separately, with a reason.</span></div>
+    <div style="flex:1 1 320px;margin:8px;padding:16px 18px;border:1px solid #e8e8ee;border-radius:12px;"><b>Security &amp; multi-company</b><br/><span style="color:#555;">A dedicated group controls access, inventory rights are checked for returns, and record rules apply per company.</span></div>
+  </div>
+
+  <!-- ============================== TECHNICAL ============================== -->
+  <h2 style="font-size:28px;font-weight:700;margin:48px 0 14px;color:#2b2b33;">Technical details</h2>
+  <table style="width:100%;border-collapse:collapse;font-size:15px;">
+    <tbody>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 14px;width:240px;color:#777;">Odoo version</td><td style="padding:10px 14px;">16.0, Community and Enterprise</td></tr>
+      <tr style="border-bottom:1px solid #eee;background:#fafafa;"><td style="padding:10px 14px;color:#777;">Depends on</td><td style="padding:10px 14px;"><code>sale_stock</code>, <code>account</code> (no Enterprise-only modules)</td></tr>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 14px;color:#777;">Security group</td><td style="padding:10px 14px;">Returns &amp; Credit Notes (Sales Managers get it automatically); returns also need Inventory / User</td></tr>
+      <tr style="border-bottom:1px solid #eee;background:#fafafa;"><td style="padding:10px 14px;color:#777;">Menu</td><td style="padding:10px 14px;">Sales &rsaquo; Orders &rsaquo; Returns &amp; Credits</td></tr>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:10px 14px;color:#777;">Automated tests</td><td style="padding:10px 14px;">20 <code>TransactionCase</code> tests: constraints, routing, mixed partial/full returns, stale wizards, filters, delivery scope</td></tr>
+      <tr style="background:#fafafa;"><td style="padding:10px 14px;color:#777;">Prerequisites</td><td style="padding:10px 14px;">Customer invoices created from the Sale Order</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============================== CONTACT ============================== -->
+  <div style="margin:52px 0 40px;background:linear-gradient(120deg,#714B67 0%,#017E84 100%);border-radius:18px;padding:36px 40px;color:#fff;">
+    <h2 style="font-size:26px;font-weight:700;margin:0 0 8px;color:#fff;">Support &amp; customization</h2>
+    <p style="font-size:16px;line-height:1.6;margin:0 0 20px;color:#fff;opacity:.95;">Questions, a demo, or changes for your own process? Get in touch.</p>
+    <a href="mailto:ibrahim.yahiah@gmail.com" style="display:inline-block;background:#fff;color:#714B67;font-weight:700;text-decoration:none;border-radius:8px;padding:12px 22px;margin:0 12px 10px 0;">&#9993;&nbsp; ibrahim.yahiah@gmail.com</a>
+    <a href="https://www.linkedin.com/in/ibrahim-yahia" target="_blank" rel="noopener" style="display:inline-block;border:2px solid #fff;color:#fff;font-weight:700;text-decoration:none;border-radius:8px;padding:10px 22px;margin:0 0 10px 0;">LinkedIn: Ibrahim Yahia</a>
+    <p style="font-size:13px;margin:14px 0 0;opacity:.8;color:#fff;">Author: Ibrahim Yahia &middot; License: LGPL-3</p>
+  </div>
+
+</section>
