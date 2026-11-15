@@ -82,9 +82,9 @@
                           decoration-muted="action == 'keep'"
                           decoration-danger="quantity &gt; max_qty or quantity &lt; 0"
                           decoration-info="action != 'keep' and quantity &lt;= max_qty">
-                        <field name="sale_line_id" invisible="1"/>
-                        <field name="currency_id" invisible="1"/>
-                        <field name="posted_creditable_qty" invisible="1"/>
+                        <field name="sale_line_id" column_invisible="1"/>
+                        <field name="currency_id" column_invisible="1"/>
+                        <field name="posted_creditable_qty" column_invisible="1"/>
                         <field name="product_id" readonly="1" options="{'no_open': True}"/>
                         <field name="default_code" readonly="1" optional="hide"/>
                         <field name="name" readonly="1" optional="hide"/>
