@@ -91,3 +91,4 @@ Lines that belong to another SO, and kit products, are left out and named in an 
 
 ## Changelog
 - 17.0.1.3.1: the wizard line `sequence` used for ordering is now stored (removes the "cannot be sorted on field 'sequence'" warning); fixed a test still calling `sale.order.action_done()`.
+- 17.0.1.3.2: hidden columns in the wizard (Sale Line, Currency, Posted Credit) and in the Returns & Credits list (Currency) no longer show as empty columns. Since v17, `invisible="1"` on a list field only blanks its cells; the column needs `column_invisible="1"`. Added a regression test.

@@ -15,7 +15,7 @@
                 <field name="picking_count" string="Returns"/>
                 <field name="credit_note_count" string="Credit Notes"/>
                 <field name="amount_credited" sum="Total"/>
-                <field name="currency_id" invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
                 <field name="state" widget="badge" decoration-success="state == 'done'"
                        decoration-warning="state == 'waiting'"/>

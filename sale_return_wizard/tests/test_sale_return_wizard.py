@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from lxml import etree
+
 from odoo import Command
 from odoo.exceptions import UserError, ValidationError
 from odoo.tests import Form, tagged
@@ -553,3 +555,26 @@ class TestSaleReturnWizard(TestSaleCommon):
             line.quantity = 3.0
         self.assertEqual(form.selected_line_count, 2)
         self.assertAlmostEqual(form.estimated_credit_amount, 3 * 100.0 + 2 * 50.0)
+
+    # ------------------------------------------------------------------
+    # 8. Hidden list columns (regression: since v17, ``invisible`` on a list
+    #    field only blanks the cells; the column itself needs ``column_invisible``)
+    # ------------------------------------------------------------------
+    def test_70_hidden_list_columns_use_column_invisible(self):
+        expected = {
+            "sale_return_wizard.view_sale_return_wizard_form": {"sale_line_id", "currency_id", "posted_creditable_qty"},
+            "sale_return_wizard.view_sale_return_log_tree": {"currency_id"},
+        }
+        for xmlid, hidden_expected in expected.items():
+            view = self.env.ref(xmlid)
+            arch = etree.fromstring(self.env[view.model].get_view(view.id)["arch"])
+            hidden = set()
+            for lst in arch.iter("list", "tree"):
+                for fld in lst.iterchildren("field"):
+                    self.assertNotIn(
+                        fld.get("invisible"), ("1", "True"),
+                        "%s: list column %r is hidden with invisible; use column_invisible" % (xmlid, fld.get("name")),
+                    )
+                    if fld.get("column_invisible") in ("1", "True"):
+                        hidden.add(fld.get("name"))
+            self.assertTrue(hidden_expected <= hidden, "%s: %s should be hidden columns" % (xmlid, hidden_expected - hidden))
