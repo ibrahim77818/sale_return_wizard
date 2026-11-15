@@ -94,3 +94,4 @@ Lines that belong to another SO, and kit products, are left out and named in an 
 
 ## Changelog
 - 18.0.1.3.1: fixed `AttributeError: 'stock.location' object has no attribute 'return_location'` on Return & Refund. Since v18 the return location comes from the return operation type (or the location chosen in the wizard), and returns are created with `stock.return.picking._create_return()`. Added a regression test; fixed a test still calling `sale.order.action_done()`.
+- 18.0.1.3.2: hidden columns in the wizard (Sale Line, Currency, Posted Credit) and in the Returns & Credits list (Currency) no longer show as empty columns. Since v17, `invisible="1"` on a list field only blanks its cells; the column needs `column_invisible="1"`. Added a regression test.
