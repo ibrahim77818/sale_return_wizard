@@ -93,3 +93,6 @@ Lines that belong to another SO, and kit products, are left out and named in an 
 - The wizard line `sequence` (used for ordering) is now a stored related field.
 - v19: `sale.order.line.product_uom` is now `product_uom_id` (`stock.move.product_uom` is unchanged), and tests use `tax_ids` on products and order lines.
 - v19: the security group no longer sets `category_id` (replaced by `privilege_id` in v19); it has no privilege, so it is listed with the other access rights on the user form.
+
+## Changelog
+- 19.0.1.3.1: fixed `AttributeError: 'stock.location' object has no attribute 'return_location'` on Return & Refund. Since v18 the return location comes from the return operation type (or the location chosen in the wizard), and returns are created with `stock.return.picking._create_return()`. Added a regression test; tests now create products with `taxes_id` (only order lines use `tax_ids` in v19) and lock orders with `action_lock()`.

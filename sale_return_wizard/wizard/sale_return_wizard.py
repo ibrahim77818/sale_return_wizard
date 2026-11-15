@@ -460,13 +460,20 @@ class SaleReturnWizard(models.TransientModel):
 
     # -- returns ----------------------------------------------------------------
     def _get_return_location(self, picking):
+        """Where the returned goods are received.
+
+        Since v18, ``stock.location.return_location`` no longer exists and the
+        standard return wizard has no ``location_id``: Odoo sends a return to
+        the destination of the return operation type when it is a receipt,
+        else back to where the goods left from. Same rule here, unless the
+        user picked another location in the wizard.
+        """
         if self.return_location_id:
             return self.return_location_id
-        location = picking.location_id
         return_type = picking.picking_type_id.return_picking_type_id
-        if return_type.default_location_dest_id.return_location:
-            location = return_type.default_location_dest_id
-        return location
+        if return_type.code == "incoming" and return_type.default_location_dest_id:
+            return return_type.default_location_dest_id
+        return picking.location_id
 
     def _allocate_return_qty(self, line):
         """Spread the requested return quantity over done deliveries, newest first.
@@ -507,14 +514,17 @@ class SaleReturnWizard(models.TransientModel):
                 active_id=picking.id, active_model="stock.picking", active_ids=picking.ids
             ).create({
                 "picking_id": picking.id,
-                "location_id": self._get_return_location(picking).id,
                 "product_return_moves": [
                     (0, 0, {"product_id": move.product_id.id, "move_id": move.id, "quantity": qty, "to_refund": True})
                     for move, qty, _log in items
                 ],
             })
-            new_picking_id, _type_id = return_wiz._create_returns()
-            new_picking = self.env["stock.picking"].browse(new_picking_id)
+            # v18+: _create_return() returns the new picking (was _create_returns() -> (id, type_id))
+            new_picking = return_wiz._create_return()
+            location = self._get_return_location(picking)
+            if new_picking.location_dest_id != location:
+                # stock.picking.write() moves the open moves and their lines too
+                new_picking.location_dest_id = location
             log_by_move = {move.id: log_line for move, _qty, log_line in items}
             for new_move in new_picking.move_ids:
                 log_line = log_by_move.get(new_move.origin_returned_move_id.id)
