@@ -557,7 +557,7 @@ class SaleReturnWizardLine(models.TransientModel):
 
     wizard_id = fields.Many2one("sale.return.wizard", required=True, ondelete="cascade", index=True)
     sale_line_id = fields.Many2one("sale.order.line", required=True, readonly=True, ondelete="cascade")
-    sequence = fields.Integer(related="sale_line_id.sequence")
+    sequence = fields.Integer(related="sale_line_id.sequence", store=True)  # stored: used in _order
     product_id = fields.Many2one(related="sale_line_id.product_id", store=True)
     default_code = fields.Char(related="product_id.default_code", string="SKU")
     name = fields.Text("Description", readonly=True)

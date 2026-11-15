@@ -534,7 +534,7 @@ class TestSaleReturnWizard(TestSaleCommon):
         # order locked after delivery
         so2 = self._create_so(qty=1.0)
         pick2 = self._deliver(so2, {self.prod_a: 1, self.prod_b: 1, self.prod_c: 1, self.prod_d: 1})
-        so2.action_done()
+        so2.action_lock()  # v17+: locking is a flag; action_done() no longer exists
         self.assertFalse(pick2.sale_return_wizard_allowed)
         with self.assertRaises(UserError):
             pick2.action_open_sale_return_wizard()

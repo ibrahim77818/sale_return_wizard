@@ -88,3 +88,6 @@ Lines that belong to another SO, and kit products, are left out and named in an 
 - Locked orders: v17 locks through a `locked` flag instead of the `done` state, checked by `sale.order._sret_is_open_for_return()`.
 - The form JS no longer passes `stayInEdition` (forms have no edit mode in v17).
 - Tests set `quantity` and `picked` instead of `quantity_done`.
+
+## Changelog
+- 17.0.1.3.1: the wizard line `sequence` used for ordering is now stored (removes the "cannot be sorted on field 'sequence'" warning); fixed a test still calling `sale.order.action_done()`.
