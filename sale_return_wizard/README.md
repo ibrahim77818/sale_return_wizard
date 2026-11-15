@@ -91,3 +91,6 @@ Lines that belong to another SO, and kit products, are left out and named in an 
 - v18: `<tree>` views are now `<list>` (`view_mode` `list,form`), and the log form uses the `<chatter/>` tag.
 - v18: products have `type="consu"` plus `is_storable`; `detailed_type` and the `product` type are gone. Tests create storable goods that way and no longer pass `chart_template_ref`.
 - The wizard line `sequence` (used for ordering) is now a stored related field.
+
+## Changelog
+- 18.0.1.3.1: fixed `AttributeError: 'stock.location' object has no attribute 'return_location'` on Return & Refund. Since v18 the return location comes from the return operation type (or the location chosen in the wizard), and returns are created with `stock.return.picking._create_return()`. Added a regression test; fixed a test still calling `sale.order.action_done()`.

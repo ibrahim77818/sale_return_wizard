@@ -535,7 +535,7 @@ class TestSaleReturnWizard(TestSaleCommon):
         # order locked after delivery
         so2 = self._create_so(qty=1.0)
         pick2 = self._deliver(so2, {self.prod_a: 1, self.prod_b: 1, self.prod_c: 1, self.prod_d: 1})
-        so2.action_done()
+        so2.action_lock()  # v17+: locking is a flag; action_done() no longer exists
         self.assertFalse(pick2.sale_return_wizard_allowed)
         with self.assertRaises(UserError):
             pick2.action_open_sale_return_wizard()
@@ -554,3 +554,32 @@ class TestSaleReturnWizard(TestSaleCommon):
             line.quantity = 3.0
         self.assertEqual(form.selected_line_count, 2)
         self.assertAlmostEqual(form.estimated_credit_amount, 3 * 100.0 + 2 * 50.0)
+
+    # ------------------------------------------------------------------
+    # 7. Return destination (regression: v18+ has no stock.location.return_location)
+    # ------------------------------------------------------------------
+    def test_60_return_location_default_and_custom(self):
+        so = self._create_so()
+        self._deliver(so, {self.prod_a: 10, self.prod_b: 10, self.prod_c: 10, self.prod_d: 10})
+
+        # default: the return receipt type's destination (warehouse stock)
+        wizard = self._wizard(so, auto_validate_return=False)
+        self._line(wizard, self.prod_a).write({"action": "return", "quantity": 2.0})
+        log = self._process(wizard)
+        expected = self.warehouse.out_type_id.return_picking_type_id.default_location_dest_id or self.stock_location
+        self.assertEqual(log.picking_ids.location_dest_id, expected)
+        self.assertEqual(log.picking_ids.move_ids.location_dest_id, expected)
+
+        # custom location chosen in the wizard
+        quarantine = self.env["stock.location"].create({
+            "name": "Quarantine", "usage": "internal", "location_id": self.stock_location.id,
+        })
+        wizard = self._wizard(so, return_location_id=quarantine.id)
+        self._line(wizard, self.prod_b).write({"action": "return", "quantity": 3.0})
+        log = self._process(wizard)
+        receipt = log.picking_ids
+        self.assertEqual(receipt.state, "done")
+        self.assertEqual(receipt.location_dest_id, quarantine)
+        self.assertEqual(receipt.move_ids.location_dest_id, quarantine)
+        self.assertEqual(receipt.move_ids.move_line_ids.location_dest_id, quarantine)
+        self.assertEqual(self.env["stock.quant"]._get_available_quantity(self.prod_b, quarantine), 3.0)
